@@ -1,0 +1,29 @@
+.bar-display {
+    position: absolute;
+    left: 6.5rem;
+    right: 6.5rem;
+    top: 9.5rem;
+
+}
+
+.single-bar {
+    width: 3px;
+    margin: 0px 1px;
+    /* background-color: orange; */
+    display: inline-block;
+    /* float: left; */
+    /* align-items: bottom;
+    align-content: bottom;
+
+    justify-content: bottom;
+    justify-items: bottom;  */
+    
+}
+
+.menu-bar {
+    display: inline-flex;
+    margin: 30px 10px;
+    
+    /* justify-content: center;
+    align-items: center; */
+}
