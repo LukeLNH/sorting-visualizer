@@ -11,29 +11,35 @@ export default class SortingVisualizer extends React.Component {
             currentAlgorithm: 'Insertion Sort',
             delay: 30,
             barColorR: 255,
-            numBars: Math.floor((window.screen.width - 220)/5),
             barMaxHeight: Math.floor(window.screen.height*2/3),
-            
+            maxNumBars: Math.floor((window.screen.width - 220)/5),
+            barWidth: 1,
         }; 
 
         //bars is a list of random numbers representing the height/color of the bars. Turned into bars using css
     }
 
     componentDidMount() { 
-        console.log(this.state.numBars);
+        let numBars = Math.floor(this.state.maxNumBars / this.state.barWidth);
+
         let newBars = [];
-        for (let i = 0; i < this.state.numBars; i ++) {
-            newBars.push(i * this.state.barMaxHeight/this.state.numBars);
+        // for (let i = 0; i < this.state.maxNumBars; i ++) {
+        //     newBars.push(i * this.state.barMaxHeight/this.state.maxNumBars);
+        // }
+
+        for (let i = 0; i < numBars; i++) {
+            newBars.push(i * this.state.barMaxHeight/numBars);
         }
         this.setState({bars: newBars});
     }
 
     async shuffle() {
+        let numBars = Math.ceil(this.state.maxNumBars / this.state.barWidth);
         let bars = this.state.bars;
         let numSwitches = 500;
         while(numSwitches >= 0) {
-            let i = Math.floor(Math.random() * this.state.numBars);
-            let j = Math.floor(Math.random() * this.state.numBars);
+            let i = Math.floor(Math.random() * numBars);
+            let j = Math.floor(Math.random() * numBars);
             let temp = bars[i];
             bars[i] = bars[j];
             bars[j] = temp;
@@ -97,6 +103,18 @@ export default class SortingVisualizer extends React.Component {
                         </Form.Group>
                         </Form>
                     </div>
+
+                    <div className = "bar-Width-slider-area">
+                        <Form>
+                        <Form.Group controlId = "barWidth">
+                            <Form.Label style = {{color: "white"}}>Bar Width</Form.Label>
+                            <Form.Control type = "range" min = "1" max = "5" step = "0.25" value = {this.state.barWidth}
+                                onChange = {(e) => {this.changeBarWidth(e.target.value)}}
+                                onInput = {(e) => {this.changeBarWidth(e.target.value)}}
+                            />
+                        </Form.Group>
+                        </Form>
+                    </div>
                 </div>
 
                 <div className = "bar-display" style = {{height: this.state.barMaxHeight}}>
@@ -107,7 +125,8 @@ export default class SortingVisualizer extends React.Component {
                             {height: `${val}px`,
                             backgroundColor: `rgb(${this.state.barColorR},
                             130,
-                            ${255*val/600})`
+                            ${255*val/600})`,
+                            width: `${this.state.barWidth * 3}px`,
                             }
                             }> 
                         
@@ -118,6 +137,15 @@ export default class SortingVisualizer extends React.Component {
         );
     }
 
+    changeBarWidth(newBarWidth) {
+        let numBars = Math.ceil(this.state.maxNumBars / newBarWidth);
+
+        let newBars = [];
+        for (let i = 0; i < numBars; i++) {
+            newBars.push(i * this.state.barMaxHeight/numBars);
+        }
+        this.setState({bars: newBars, barWidth: newBarWidth});
+    }
 
     changeSortingAlgorithm(newAlgorithm) {
         this.setState({currentAlgorithm: newAlgorithm});

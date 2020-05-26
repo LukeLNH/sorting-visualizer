@@ -9,12 +9,12 @@ body{
 
 .bar-display {
     margin-top: 20px;
-    left: 100px;
-    right: 100px;
+    margin-left: 50px;
+    margin-right: 50px;
 }
 
 .single-bar {
-    width: 3px;
+    /* width: 3px; */
     margin: 0px 1px;
     display: inline-block;
 }
@@ -35,7 +35,8 @@ body{
 
 
 .sorting-speed-slider-area,
-.color-slider-area {
+.color-slider-area,
+.bar-Width-slider-area {
     margin-top: 10px;
 }
 
