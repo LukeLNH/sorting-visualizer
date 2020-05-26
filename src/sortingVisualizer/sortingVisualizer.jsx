@@ -3,6 +3,7 @@ import './sortingVisualizer.css';
 import {Button, Dropdown, DropdownButton, Form} from 'react-bootstrap';
 
 //todo: move change the color of the bars back to orange in the SETHEIGHT fn!
+//crumpled paper image from https://www.freepik.com/free-photos-vectors/crumpled-paper-background
 export default class SortingVisualizer extends React.Component {
     constructor(props) {
         super(props); //something for React, just do it
@@ -11,7 +12,8 @@ export default class SortingVisualizer extends React.Component {
             currentAlgorithm: 'Insertion Sort',
             delay: 140,
             barColorR: 255,
-            numBars: Math.floor((window.screen.width*2/3)/5)
+            numBars: Math.floor((window.screen.width - 220)/5),
+            barMaxHeight: Math.floor(window.screen.height*2/3),
             
         }; 
 
@@ -22,7 +24,7 @@ export default class SortingVisualizer extends React.Component {
         console.log(this.state.numBars);
         let newBars = [];
         for (let i = 0; i < this.state.numBars; i ++) {
-            newBars.push(i * 600 /this.state.numBars);
+            newBars.push(i * this.state.barMaxHeight/this.state.numBars);
         }
         this.setState({bars: newBars});
     }
@@ -54,14 +56,14 @@ export default class SortingVisualizer extends React.Component {
         
         let barDisplay = this.state.bars;
         return (
-            <div>
+            <div  className = "sorting-visualizer">
                 <div className = "menu-bar">
-                    <div>
-                        <Button className = "shuffle-button" onClick = {() => this.shuffle()}>Shuffle</Button>
+                    <div className = "shuffle-area">
+                        <Button variant = "dark" size = "lg" className = "shuffle-button" onClick = {() => this.shuffle()}>Shuffle</Button>
                     </div>
 
-                    <div>
-                        <DropdownButton id = "dropdown-button" title = {this.state.currentAlgorithm}>
+                    <div className = "choose-algorithm-area">
+                        <DropdownButton variant = "dark" size = "lg" id = "dropdown-button" title = {this.state.currentAlgorithm}>
                             <Dropdown.Item onClick = {() => {this.changeSortingAlgorithm('Insertion Sort')}}>Insertion Sort</Dropdown.Item>
                             <Dropdown.Item onClick = {() => {this.changeSortingAlgorithm('Selection Sort')}}>Selection Sort</Dropdown.Item>
                             <Dropdown.Item onClick = {() => {this.changeSortingAlgorithm('Quick Sort')}}>Quick Sort</Dropdown.Item>
@@ -71,18 +73,14 @@ export default class SortingVisualizer extends React.Component {
                         </DropdownButton>
                     </div>
 
-                    <div>
-                        <Button className = "sort-button" onClick = {() => {this.sort()}}>Sort</Button>
+                    <div className = "sort-button-area">
+                        <Button variant = "dark" size = "lg" className = "sort-button" onClick = {() => {this.sort()}}>Sort</Button>
                     </div>
 
-                    {/* <div>
-                        <Button className = "stop-button" onClick = {() => {this.stop()}} >Stop</Button>
-                    </div> */}
-
-                    <div>
+                    <div className = "sorting-speed-slider-area">
                         <Form>
                             <Form.Group controlId = "sortingSpeed">
-                                <Form.Label>Algorithm Speed</Form.Label>
+                                <Form.Label style = {{color: "white"}}>Algorithm Speed</Form.Label>
                                 <Form.Control type = "range" min = "0" max = "140" step = "20" value = {this.state.delay}  
                                     onChange = {(e) => {this.changeDelay(e)}}
                                     onInput = {(e) => {this.changeDelay(e)}}
@@ -90,10 +88,10 @@ export default class SortingVisualizer extends React.Component {
                             </Form.Group>
                         </Form>
                     </div>
-                    <div>
+                    <div className = "color-slider-area">
                         <Form>
                         <Form.Group controlId = "barColor">
-                            <Form.Label>bar Colors</Form.Label>
+                            <Form.Label style = {{color: "white"}}>Bar Colors</Form.Label>
                             <Form.Control type = "range" min = "0" max = "255" step = "1" value = {this.state.barColorR}
                                 onChange = {(e) => {this.setState({barColorR: e.target.value})}}
                                 onInput = {(e) => {this.setState({barColorR: e.target.value})}}
@@ -102,11 +100,7 @@ export default class SortingVisualizer extends React.Component {
                         </Form>
                     </div>
                 </div>            
-                <div className = "bar-display"
-                    // style = {{
-                    //     left: 
-                    // }}
-                    >
+                <div className = "bar-display" style = {{height: this.state.barMaxHeight}}>
                     {barDisplay.map((val, index) => ( //!!! the brackets after the arrow HAVE to be ()
                         <div className = "single-bar" 
                         key = {index}
@@ -365,7 +359,7 @@ export default class SortingVisualizer extends React.Component {
     async renderSingleBar(index) {
         let barDisplayArray = document.getElementsByClassName("single-bar");
         let currentColor = barDisplayArray[index].style.backgroundColor;
-        barDisplayArray[index].style.backgroundColor = "blue";
+        barDisplayArray[index].style.backgroundColor = "black";
         await this.sleep(140.05 - this.state.delay);
         barDisplayArray[index].style.backgroundColor = currentColor;
     }
@@ -375,6 +369,7 @@ export default class SortingVisualizer extends React.Component {
         await this.sleep(140.05 - this.state.delay);
         let currentBarStyle = barDisplayArray[curIndex].style;
         currentBarStyle.height = `${newHeight}px`;
+        currentBarStyle.backgroundColor = `rgb(${this.state.barColorR}, 130, ${255*newHeight/600})`
     }
 
 
