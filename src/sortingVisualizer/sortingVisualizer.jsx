@@ -3,14 +3,13 @@ import './sortingVisualizer.css';
 import {Button, Dropdown, DropdownButton, Form} from 'react-bootstrap';
 
 //todo: move change the color of the bars back to orange in the SETHEIGHT fn!
-//crumpled paper image from https://www.freepik.com/free-photos-vectors/crumpled-paper-background
 export default class SortingVisualizer extends React.Component {
     constructor(props) {
         super(props); //something for React, just do it
         this.state = { 
             bars: [],
             currentAlgorithm: 'Insertion Sort',
-            delay: 140,
+            delay: 30,
             barColorR: 255,
             numBars: Math.floor((window.screen.width - 220)/5),
             barMaxHeight: Math.floor(window.screen.height*2/3),
@@ -40,10 +39,9 @@ export default class SortingVisualizer extends React.Component {
             bars[j] = temp;
             numSwitches--;
 
-            await this.renderSingleBar(i);
+            await Promise.all([this.renderSingleBar(i), this.renderSingleBar(j)]);
+            
             this.setHeight(i, bars[i]);
-
-            await this.renderSingleBar(j);
             this.setHeight(j, bars[j]);
         }
 
@@ -56,7 +54,7 @@ export default class SortingVisualizer extends React.Component {
         
         let barDisplay = this.state.bars;
         return (
-            <div  className = "sorting-visualizer">
+            <div  className = "sorting-visualizer" >
                 <div className = "menu-bar">
                     <div className = "shuffle-area">
                         <Button variant = "dark" size = "lg" className = "shuffle-button" onClick = {() => this.shuffle()}>Shuffle</Button>
@@ -81,7 +79,7 @@ export default class SortingVisualizer extends React.Component {
                         <Form>
                             <Form.Group controlId = "sortingSpeed">
                                 <Form.Label style = {{color: "white"}}>Algorithm Speed</Form.Label>
-                                <Form.Control type = "range" min = "0" max = "140" step = "20" value = {this.state.delay}  
+                                <Form.Control type = "range" min = "0" max = "30" step = "6" value = {this.state.delay}  
                                     onChange = {(e) => {this.changeDelay(e)}}
                                     onInput = {(e) => {this.changeDelay(e)}}
                                 />
@@ -99,7 +97,8 @@ export default class SortingVisualizer extends React.Component {
                         </Form.Group>
                         </Form>
                     </div>
-                </div>            
+                </div>
+
                 <div className = "bar-display" style = {{height: this.state.barMaxHeight}}>
                     {barDisplay.map((val, index) => ( //!!! the brackets after the arrow HAVE to be ()
                         <div className = "single-bar" 
@@ -155,16 +154,14 @@ export default class SortingVisualizer extends React.Component {
 
     //all the sorting algorithms
     async insertionSort(barArray) {
-        //!!! include a shield for when the array is empty later?
 
         for(let i = 1; i < barArray.length; i++) {
             
-            await this.renderSingleBar(i);
-
             let current = barArray[i];
             let j = i - 1;
 
             while (j >= 0 && current < barArray[j]) {
+                await this.renderSingleBar(j);
                 barArray[j + 1] = barArray[j];
                 this.setHeight(j+1, barArray[j+1]);
                 j--;
@@ -182,19 +179,15 @@ export default class SortingVisualizer extends React.Component {
             let currentMinIndex = i;
 
             for (let j = i + 1; j < barArray.length; j++) {
+                await this.renderSingleBar(j);
                 if(barArray[currentMinIndex] > barArray[j]) {
                     currentMinIndex = j;
                 }
             }
             
-            await this.renderSingleBar(i);
+            // await Promise.all([this.renderSingleBar(i), this.renderSingleBar(currentMinIndex)]);
             this.setHeight(i, barArray[currentMinIndex]);
-
-            await this.renderSingleBar(currentMinIndex);
             this.setHeight(currentMinIndex, barArray[i]);
-
-            
-            
 
             let temp = barArray[currentMinIndex];
             barArray[currentMinIndex] = barArray[i];
@@ -217,7 +210,6 @@ export default class SortingVisualizer extends React.Component {
         for (let i = lowIndex; i < highIndex; i++) { //iterate through all numbers except pivotNum(the last element)
             
             await this.renderSingleBar(i);
-            this.renderSingleBar(middleIndex);
 
             if (barArray[i] < pivotNum) {
                 let temp = barArray[middleIndex]; 
@@ -235,11 +227,13 @@ export default class SortingVisualizer extends React.Component {
         barArray[middleIndex] = pivotNum;
         //logic for partioning method from https://www.geeksforgeeks.org/quick-sort/
 
-        this.setHeight(highIndex, barArray[middleIndex]);
+        this.setHeight(highIndex, barArray[highIndex]);
         this.setHeight(middleIndex, pivotNum);
         //natural recursion
-        await this.quickSortHelper(barArray, lowIndex, middleIndex - 1, depth++);
-        await this.quickSortHelper(barArray, middleIndex + 1, highIndex, depth++);
+        
+        await Promise.all([this.quickSortHelper(barArray, lowIndex, middleIndex - 1, depth++), 
+            this.quickSortHelper(barArray, middleIndex + 1, highIndex, depth++)]);
+        
     }
 
 
@@ -258,9 +252,8 @@ export default class SortingVisualizer extends React.Component {
         let leftArray = barArray.slice(0, midIndex);
         let rightArray = barArray.slice(midIndex, barArray.length);
     
-        await this.mergeSortHelper(leftArray, absLowIndex);
-        await this.mergeSortHelper(rightArray, absLowIndex + midIndex);
-    
+        await Promise.all([this.mergeSortHelper(leftArray, absLowIndex), 
+            this.mergeSortHelper(rightArray, absLowIndex + midIndex)]);
         await this.mergeSortMerger(barArray, leftArray, rightArray, absLowIndex);
     
     }
@@ -272,6 +265,7 @@ export default class SortingVisualizer extends React.Component {
 
                 for (let j = 0; j < rightArray.length; j++) {
                     barArray.push(rightArray[j]);
+                    await this.renderSingleBar(lowIndex + i);
                     this.setHeight(lowIndex + i, rightArray[j]);
                     i++;
                 }
@@ -281,6 +275,7 @@ export default class SortingVisualizer extends React.Component {
                 barArray.splice(i);
                 for (let j = 0; j < leftArray.length; j++) {
                     barArray.push(leftArray[j]);
+                    await this.renderSingleBar(lowIndex + i);
                     this.setHeight(lowIndex + i, leftArray[j]);
                     i++;
                 }
@@ -293,7 +288,7 @@ export default class SortingVisualizer extends React.Component {
                 barArray[i] = rightArray.shift();
             }
             await this.renderSingleBar(lowIndex + i);
-            await this.setHeight(lowIndex + i, barArray[i]);
+            this.setHeight(lowIndex + i, barArray[i]);
         }
     }
 
@@ -312,11 +307,10 @@ export default class SortingVisualizer extends React.Component {
                     barArray[i + gap] = temp;
                     swap = true;
 
-                    await this.renderSingleBar(i);
-                    this.renderSingleBar(i + gap);
-
-                    await this.setHeight(i, barArray[i]);
-                    await this.setHeight(i + gap, barArray[i + gap]);
+                    await Promise.all([this.renderSingleBar(i), this.renderSingleBar(i + gap)]);
+                
+                    this.setHeight(i, barArray[i]);
+                    this.setHeight(i + gap, barArray[i + gap]);
                     
                 }
             }
@@ -338,9 +332,9 @@ export default class SortingVisualizer extends React.Component {
                     barArray[j] = barArray[j + 1];
                     barArray[j + 1] = temp;
 
-                    await this.renderSingleBar(j);
-                    this.renderSingleBar(j + 1);
-
+                    await Promise.all([this.renderSingleBar(j),
+                        this.renderSingleBar(j + 1)]);
+                    
                     this.setHeight(j, barArray[j]);
                     this.setHeight(j + 1, barArray[j + 1]);
                 }
@@ -352,21 +346,21 @@ export default class SortingVisualizer extends React.Component {
 
 
     //sleep function using setTimeout from https://stackoverflow.com/questions/951021/what-is-the-javascript-version-of-sleep
-    sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+    sleep() {
+        return new Promise(resolve => setTimeout(resolve, 30.00001 - this.state.delay));
     }
 
     async renderSingleBar(index) {
         let barDisplayArray = document.getElementsByClassName("single-bar");
         let currentColor = barDisplayArray[index].style.backgroundColor;
         barDisplayArray[index].style.backgroundColor = "black";
-        await this.sleep(140.05 - this.state.delay);
+        await this.sleep();
         barDisplayArray[index].style.backgroundColor = currentColor;
     }
 
     async setHeight(curIndex, newHeight) {
         let barDisplayArray = document.getElementsByClassName("single-bar");
-        await this.sleep(140.05 - this.state.delay);
+        await this.sleep();
         let currentBarStyle = barDisplayArray[curIndex].style;
         currentBarStyle.height = `${newHeight}px`;
         currentBarStyle.backgroundColor = `rgb(${this.state.barColorR}, 130, ${255*newHeight/600})`

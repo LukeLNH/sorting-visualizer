@@ -2,30 +2,25 @@ body{
     margin: 0;
 }
 
+.sorting-visualizer {
+    display: flex;
+    flex-direction: column;
+}
+
 .bar-display {
-    position: absolute;
+    margin-top: 20px;
     left: 100px;
     right: 100px;
-    bottom: 5px;
-
 }
 
 .single-bar {
     width: 3px;
     margin: 0px 1px;
-    /* background-color: orange; */
     display: inline-block;
-    /* float: left; */
-    /* align-items: bottom;
-    align-content: bottom;
-
-    justify-content: bottom;
-    justify-items: bottom;  */
-    
 }
 
 .menu-bar {
-    position: absolute;
+    /* position: absolute; */
     top: 0;
     left: 0;
     width: 100%;
@@ -38,19 +33,14 @@ body{
     
 }
 
-.shuffle-area,
-.choose-algorithm-area,
-.sort-button-area,
+
 .sorting-speed-slider-area,
 .color-slider-area {
-    height: 100%;
-    
-
-    /* border: black 1px solid; */
+    margin-top: 10px;
 }
 
 .shuffle-area,
 .choose-algorithm-area,
 .sort-button-area {
-    padding: 10px;
+    padding: 12px;
 }
