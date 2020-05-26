@@ -11,8 +11,7 @@ export default class SortingVisualizer extends React.Component {
             currentAlgorithm: 'Insertion Sort',
             delay: 140,
             barColorR: 255,
-            barColorB: 150,
-            
+            numBars: Math.floor((window.screen.width*2/3)/5)
             
         }; 
 
@@ -20,11 +19,10 @@ export default class SortingVisualizer extends React.Component {
     }
 
     componentDidMount() { 
-        // let barDisplay = document.getElementById("bar-display");
-        // console.log(barDisplay.style.width);
+        console.log(this.state.numBars);
         let newBars = [];
-        for (let i = 0; i < 270; i ++) {
-            newBars.push(i * 600 /270);
+        for (let i = 0; i < this.state.numBars; i ++) {
+            newBars.push(i * 600 /this.state.numBars);
         }
         this.setState({bars: newBars});
     }
@@ -33,8 +31,8 @@ export default class SortingVisualizer extends React.Component {
         let bars = this.state.bars;
         let numSwitches = 500;
         while(numSwitches >= 0) {
-            let i = Math.floor(Math.random() * 270);
-            let j = Math.floor(Math.random() * 270);
+            let i = Math.floor(Math.random() * this.state.numBars);
+            let j = Math.floor(Math.random() * this.state.numBars);
             let temp = bars[i];
             bars[i] = bars[j];
             bars[j] = temp;
@@ -104,7 +102,11 @@ export default class SortingVisualizer extends React.Component {
                         </Form>
                     </div>
                 </div>            
-                <div className = "bar-display">
+                <div className = "bar-display"
+                    // style = {{
+                    //     left: 
+                    // }}
+                    >
                     {barDisplay.map((val, index) => ( //!!! the brackets after the arrow HAVE to be ()
                         <div className = "single-bar" 
                         key = {index}
@@ -366,8 +368,6 @@ export default class SortingVisualizer extends React.Component {
         barDisplayArray[index].style.backgroundColor = "blue";
         await this.sleep(140.05 - this.state.delay);
         barDisplayArray[index].style.backgroundColor = currentColor;
-        console.log(barDisplayArray[index].style.height);
-        
     }
 
     async setHeight(curIndex, newHeight) {
