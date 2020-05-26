@@ -1,5 +1,5 @@
 {
-  
+  "homepage": "https://kapoooya2001.github.io/sorting-visualizer/",
   "name": "sorting-visualizer",
   "version": "0.1.0",
   "private": true,
@@ -14,6 +14,8 @@
     "save-dev": "0.0.1-security"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
