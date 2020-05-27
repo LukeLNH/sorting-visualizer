@@ -8,14 +8,16 @@ body{
 }
 
 .bar-display {
-    margin-top: 20px;
-    margin-left: 50px;
-    margin-right: 50px;
+    /* background-color: black; */
+    margin-top: 6vh;
+    margin-left: 5vw;
+    margin-right: 5vw;
+    width: 90vw;
 }
 
 .single-bar {
-    /* width: 3px; */
-    margin: 0px 1px;
+    /* width: 0.3vw; */
+    margin: 0vh 0.05vw;
     display: inline-block;
 }
 
@@ -25,10 +27,11 @@ body{
     left: 0;
     width: 100%;
     display: inline-flex;
-    
+    flex-wrap: wrap;
     background-color: rgba(0, 0, 0, 1);
     justify-content: space-evenly;
-    box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.3);
+    box-shadow: 0vw 3vh 3vh 0vh rgba(0, 0, 0, 0.3);
+    width: 100vw;
     /* align-items: center; */
     
 }
@@ -37,11 +40,11 @@ body{
 .sorting-speed-slider-area,
 .color-slider-area,
 .bar-Width-slider-area {
-    margin-top: 10px;
+    margin-top: 3vh;
 }
 
 .shuffle-area,
 .choose-algorithm-area,
 .sort-button-area {
-    padding: 12px;
+    padding: 3vh;
 }

@@ -11,8 +11,10 @@ export default class SortingVisualizer extends React.Component {
             currentAlgorithm: 'Insertion Sort',
             delay: 30,
             barColorR: 255,
-            barMaxHeight: Math.floor(window.screen.height*2/3),
-            maxNumBars: Math.floor((window.screen.width - 220)/5),
+            barMaxHeight: 67,
+            //max height of the bars will be 67vh
+            maxNumBars: 180,
+            //max num bars will be 90 / 0.5; 90 is vw, 0.5 is the space taken up per bar
             barWidth: 1,
         }; 
 
@@ -21,7 +23,6 @@ export default class SortingVisualizer extends React.Component {
 
     componentDidMount() { 
         let numBars = Math.floor(this.state.maxNumBars / this.state.barWidth);
-
         let newBars = [];
         // for (let i = 0; i < this.state.maxNumBars; i ++) {
         //     newBars.push(i * this.state.barMaxHeight/this.state.maxNumBars);
@@ -122,11 +123,11 @@ export default class SortingVisualizer extends React.Component {
                         <div className = "single-bar" 
                         key = {index}
                         style = {
-                            {height: `${val}px`,
+                            {height: `${val}vh`,
                             backgroundColor: `rgb(${this.state.barColorR},
                             130,
-                            ${255*val/600})`,
-                            width: `${this.state.barWidth * 3}px`,
+                            ${255*val/this.state.barMaxHeight})`,
+                            width: `${this.state.barWidth * 0.3}vw`,
                             }
                             }> 
                         
@@ -390,8 +391,8 @@ export default class SortingVisualizer extends React.Component {
         let barDisplayArray = document.getElementsByClassName("single-bar");
         await this.sleep();
         let currentBarStyle = barDisplayArray[curIndex].style;
-        currentBarStyle.height = `${newHeight}px`;
-        currentBarStyle.backgroundColor = `rgb(${this.state.barColorR}, 130, ${255*newHeight/600})`
+        currentBarStyle.height = `${newHeight}vh`;
+        currentBarStyle.backgroundColor = `rgb(${this.state.barColorR}, 130, ${255*newHeight/this.state.barMaxHeight})`
     }
 
 
