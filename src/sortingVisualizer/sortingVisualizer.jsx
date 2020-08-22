@@ -6,7 +6,7 @@ import {Button, Dropdown, DropdownButton, Form} from 'react-bootstrap';
 export default class SortingVisualizer extends React.Component {
     constructor(props) {
         super(props); //something for React, just do it
-        this.state = { 
+        this.state = {
             bars: [],
             currentAlgorithm: 'Insertion Sort',
             delay: 30,
@@ -16,22 +16,29 @@ export default class SortingVisualizer extends React.Component {
             maxNumBars: 180,
             //max num bars will be 90 / 0.5; 90 is vw, 0.5 is the space taken up per bar
             barWidth: 1,
-        }; 
+        };
 
         //bars is a list of random numbers representing the height/color of the bars. Turned into bars using css
     }
 
-    componentDidMount() { 
+    componentDidMount() {
         let numBars = Math.floor(this.state.maxNumBars / this.state.barWidth);
         let newBars = [];
-        // for (let i = 0; i < this.state.maxNumBars; i ++) {
-        //     newBars.push(i * this.state.barMaxHeight/this.state.maxNumBars);
-        // }
 
-        for (let i = 0; i < numBars; i++) {
+        for (let i = 1; i <= numBars; i++) {
             newBars.push(i * this.state.barMaxHeight/numBars);
         }
         this.setState({bars: newBars});
+    }
+
+    changeBarWidth(newBarWidth) {
+        let numBars = Math.ceil(this.state.maxNumBars / newBarWidth);
+
+        let newBars = [];
+        for (let i = 1; i <= numBars; i++) {
+            newBars.push(i * this.state.barMaxHeight/numBars);
+        }
+        this.setState({bars: newBars, barWidth: newBarWidth});
     }
 
     async shuffle() {
@@ -47,7 +54,7 @@ export default class SortingVisualizer extends React.Component {
             numSwitches--;
 
             await Promise.all([this.renderSingleBar(i), this.renderSingleBar(j)]);
-            
+
             this.setHeight(i, bars[i]);
             this.setHeight(j, bars[j]);
         }
@@ -55,10 +62,10 @@ export default class SortingVisualizer extends React.Component {
         this.setState({bars});
     }
 
-    
 
-    render() { //method belonging to super class, must implement. For React to render this component   
-        
+
+    render() { //method belonging to super class, must implement. For React to render this component
+
         let barDisplay = this.state.bars;
         return (
             <div  className = "sorting-visualizer" >
@@ -86,7 +93,7 @@ export default class SortingVisualizer extends React.Component {
                         <Form>
                             <Form.Group controlId = "sortingSpeed">
                                 <Form.Label style = {{color: "white"}}>Algorithm Speed</Form.Label>
-                                <Form.Control type = "range" min = "0" max = "30" step = "6" value = {this.state.delay}  
+                                <Form.Control type = "range" min = "0" max = "30" step = "6" value = {this.state.delay}
                                     onChange = {(e) => {this.changeDelay(e)}}
                                     onInput = {(e) => {this.changeDelay(e)}}
                                 />
@@ -120,7 +127,7 @@ export default class SortingVisualizer extends React.Component {
 
                 <div className = "bar-display" style = {{height: this.state.barMaxHeight}}>
                     {barDisplay.map((val, index) => ( //!!! the brackets after the arrow HAVE to be ()
-                        <div className = "single-bar" 
+                        <div className = "single-bar"
                         key = {index}
                         style = {
                             {height: `${val}vh`,
@@ -129,23 +136,13 @@ export default class SortingVisualizer extends React.Component {
                             ${255*val/this.state.barMaxHeight})`,
                             width: `${this.state.barWidth * 0.3}vw`,
                             }
-                            }> 
-                        
+                            }>
+
                         </div>
                     ))}
                 </div>
             </div>
         );
-    }
-
-    changeBarWidth(newBarWidth) {
-        let numBars = Math.ceil(this.state.maxNumBars / newBarWidth);
-
-        let newBars = [];
-        for (let i = 0; i < numBars; i++) {
-            newBars.push(i * this.state.barMaxHeight/numBars);
-        }
-        this.setState({bars: newBars, barWidth: newBarWidth});
     }
 
     changeSortingAlgorithm(newAlgorithm) {
@@ -185,7 +182,7 @@ export default class SortingVisualizer extends React.Component {
     async insertionSort(barArray) {
 
         for(let i = 1; i < barArray.length; i++) {
-            
+
             let current = barArray[i];
             let j = i - 1;
 
@@ -195,7 +192,7 @@ export default class SortingVisualizer extends React.Component {
                 this.setHeight(j+1, barArray[j+1]);
                 j--;
             }
-            
+
             barArray[j+1] = current;
             this.setHeight(j+1, current);
         }
@@ -213,7 +210,7 @@ export default class SortingVisualizer extends React.Component {
                     currentMinIndex = j;
                 }
             }
-            
+
             // await Promise.all([this.renderSingleBar(i), this.renderSingleBar(currentMinIndex)]);
             this.setHeight(i, barArray[currentMinIndex]);
             this.setHeight(currentMinIndex, barArray[i]);
@@ -232,16 +229,16 @@ export default class SortingVisualizer extends React.Component {
 
     async quickSortHelper(barArray, lowIndex, highIndex, depth) {
         if(lowIndex >= highIndex) return; //guard for natural recursion
-        
+
         let middleIndex = lowIndex; //middleIndex is where the pivotNum will end up in the end
         let pivotNum = barArray[highIndex]; //setting the pivot number to be the final number in the array
 
         for (let i = lowIndex; i < highIndex; i++) { //iterate through all numbers except pivotNum(the last element)
-            
+
             await this.renderSingleBar(i);
 
             if (barArray[i] < pivotNum) {
-                let temp = barArray[middleIndex]; 
+                let temp = barArray[middleIndex];
                 barArray[middleIndex] = barArray[i];
                 barArray[i] = temp;
                 middleIndex++;
@@ -259,10 +256,10 @@ export default class SortingVisualizer extends React.Component {
         this.setHeight(highIndex, barArray[highIndex]);
         this.setHeight(middleIndex, pivotNum);
         //natural recursion
-        
-        await Promise.all([this.quickSortHelper(barArray, lowIndex, middleIndex - 1, depth++), 
+
+        await Promise.all([this.quickSortHelper(barArray, lowIndex, middleIndex - 1, depth++),
             this.quickSortHelper(barArray, middleIndex + 1, highIndex, depth++)]);
-        
+
     }
 
 
@@ -273,18 +270,18 @@ export default class SortingVisualizer extends React.Component {
 
     async mergeSortHelper(barArray, absLowIndex) {
         if (barArray.length <= 1) return; //guard for natural recursion
-        
-    
+
+
         let midIndex = Math.floor(barArray.length / 2);
 
-    
+
         let leftArray = barArray.slice(0, midIndex);
         let rightArray = barArray.slice(midIndex, barArray.length);
-    
-        await Promise.all([this.mergeSortHelper(leftArray, absLowIndex), 
+
+        await Promise.all([this.mergeSortHelper(leftArray, absLowIndex),
             this.mergeSortHelper(rightArray, absLowIndex + midIndex)]);
         await this.mergeSortMerger(barArray, leftArray, rightArray, absLowIndex);
-    
+
     }
 
     async mergeSortMerger(barArray, leftArray, rightArray, lowIndex) {
@@ -310,7 +307,7 @@ export default class SortingVisualizer extends React.Component {
                 }
                 break;
             }
-    
+
             if (leftArray[0] < rightArray[0]) {
                 barArray[i] = leftArray.shift();
             } else {
@@ -337,10 +334,10 @@ export default class SortingVisualizer extends React.Component {
                     swap = true;
 
                     await Promise.all([this.renderSingleBar(i), this.renderSingleBar(i + gap)]);
-                
+
                     this.setHeight(i, barArray[i]);
                     this.setHeight(i + gap, barArray[i + gap]);
-                    
+
                 }
             }
         }
@@ -363,7 +360,7 @@ export default class SortingVisualizer extends React.Component {
 
                     await Promise.all([this.renderSingleBar(j),
                         this.renderSingleBar(j + 1)]);
-                    
+
                     this.setHeight(j, barArray[j]);
                     this.setHeight(j + 1, barArray[j + 1]);
                 }
@@ -398,7 +395,7 @@ export default class SortingVisualizer extends React.Component {
 
 
 
-    
+
     //insertion sort --- done
     //selection sort --- done
     //quick sort --- done
@@ -417,9 +414,9 @@ export default class SortingVisualizer extends React.Component {
     // sound effects
     // slider bar to adjust number of things to sort
 
-    
-    
-    
 
-    
+
+
+
+
 }
